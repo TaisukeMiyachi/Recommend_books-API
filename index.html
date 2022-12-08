@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c' rel="stylesheet">
+    <title>理解度チェック</title>
+</head>
+
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <h1 id="main_title">今日の理解度チェック</h1>
+    <div id="screen">
+        <div id="left">
+            <!-- <div id="number">
+        番号: <input id="studentNumber" type="value">
+    </div> -->
+
+            <div id="name">
+                氏名:
+                <select id="studentName">
+                    <option></option>
+                    <!-- <option>秋山好古</option>
+                    <option>秋山真之</option>
+                    <option>夏目金之助</option>
+                    <option>児玉源太郎</option>
+                    <option>乃木希典</option> -->
+
+                </select>
+
+                <!-- <input id="studentName" type="text"> -->
+            </div>
+
+            <!-- 入力画面  -->
+            <h2 id="headtext">理解をできたものから、順次チェックを入れてください。</h2>
+            <!-- 講義 -->
+            <div id="lecture-box">
+                <h1 id="lecture_title">講　義</h1>
+                <div id="lecture-containar">
+                    <div id="lecture">
+                        <label><input type="radio" name="check_lec" value="100">100%</label>
+                        <label><input type="radio" name="check_lec" value="80">80%</label>
+                        <label><input type="radio" name="check_lec" value="50">50%</label>
+                        <label><input type="radio" name="check_lec" value="0">詰んだ！</label>
+                    </div>
+                    <div class="progress">
+                        <div id="progress_lecture" class="progress-bar" role="progressbar"
+                            aria-label="Example with label" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 例題1 -->
+            <div id="question1-box">
+                <h1 id="question1_title">関　数</h1>
+                <div id="question1-containar">
+                    <div id="question1">
+                        <label><input type="radio" name="check_q1" value="100">100%</label>
+                        <label><input type="radio" name="check_q1" value="80">80%</label>
+                        <label><input type="radio" name="check_q1" value="50">50%</label>
+                        <label><input type="radio" name="check_q1" value="0">詰んだ！</label>
+                    </div>
+                    <div class="progress">
+                        <div id="progress_question1" class="progress-bar" role="progressbar" aria-label="Basic example"
+                            style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 例題2 -->
+            <div id="question2-box">
+                <h1 id="question2_title">ベクトル</h1>
+                <div id="question2-containar">
+                    <div id="question2">
+                        <label><input type="radio" name="check_q2" value="100">100%</label>
+                        <label><input type="radio" name="check_q2" value="80">80%</label>
+                        <label><input type="radio" name="check_q2" value="50">50%</label>
+                        <label><input type="radio" name="check_q2" value="0">詰んだ！</label>
+                    </div>
+                    <div class="progress">
+                        <div id="progress_question2" class="progress-bar" role="progressbar" aria-label="Basic example"
+                            style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 課題 -->
+            <div id="question3-box">
+                <h1 id="question3_title">課　題</h1>
+                <div id="question3-containar">
+                    <div id="question3">
+                        <label><input type="radio" name="check_q3" value="100">100%</label>
+                        <label><input type="radio" name="check_q3" value="80">80%</label>
+                        <label><input type="radio" name="check_q3" value="50">50%</label>
+                        <label><input type="radio" name="check_q3" value="0">詰んだ！</label>
+                    </div>
+                    <div class="progress">
+                        <div id="progress_question3" class="progress-bar" role="progressbar" aria-label="Basic example"
+                            style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="send_button">
+                <button type="button" class="btn btn-secondary" id="send">送信</button>
+            </div>
+
+            <div id="recomemnd_button">
+                <button type="button" class="btn btn-secondary" id="recommend">おすすめ</button>
+            </div>
+        </div>
+
+        <div id="right">
+            <canvas canvas id="myChart"></canvas>
+        </div>
+    </div>
+
+    <div id="output">
+        <h2>おすすめの参考書</h2>
+    </div>
+
+    <!-- javascript ////////////////////////////////////////////////////////////////// -->
+
+    <script type="module">
+        // 日時をいい感じの形式にする関数
+        function convertTimestampToDatetime(timestamp) {
+            const _d = timestamp ? new Date(timestamp * 1000) : new Date();
+            const Y = _d.getFullYear();
+            const m = (_d.getMonth() + 1).toString().padStart(2, '0');
+            const d = _d.getDate().toString().padStart(2, '0');
+            const H = _d.getHours().toString().padStart(2, '0');
+            const i = _d.getMinutes().toString().padStart(2, '0');
+            const s = _d.getSeconds().toString().padStart(2, '0');
+            return `${Y}/${m}/${d} ${H}:${i}:${s}`;
+        }
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDq2AKxud_OuAlwM_jT5O54M0jVsckSg-I",
+            authDomain: "comprehension-2d647.firebaseapp.com",
+            projectId: "comprehension-2d647",
+            storageBucket: "comprehension-2d647.appspot.com",
+            messagingSenderId: "784839392260",
+            appId: "1:784839392260:web:b94db3bbdc3ab61db3c951"
+        };
+
+        import {
+            getFirestore,
+            collection,
+            addDoc,
+            serverTimestamp,
+            onSnapshot,
+            query,
+            orderBy,
+            deleteDoc,
+            doc,
+        } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js";
+        // console.log(listner.val())
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        $("#send").on("click", function () {
+            //ラジオボタンから各valを取得(lecture_val)//
+            let check_lecRadio = document.getElementsByName('check_lec');
+            let len = check_lecRadio.length;
+
+            let lecture_val = '';
+
+            for (let i = 0; i < len; i++) {
+                if (check_lecRadio.item(i).checked) {
+                    lecture_val = check_lecRadio.item(i).value;
+                }
+            }
+            console.log(lecture_val);
+
+            //ラジオボタンから各valを取得(question1_val)//
+            let check_q1Radio = document.getElementsByName('check_q1');
+            let lenq1 = check_q1Radio.length;
+
+            let question1_val = '';
+
+            for (let i = 0; i < lenq1; i++) {
+                if (check_q1Radio.item(i).checked) {
+                    question1_val = check_q1Radio.item(i).value;
+                }
+            }
+            console.log(question1_val);
+
+            //ラジオボタンから各valを取得(question2_val)//
+            let check_q2Radio = document.getElementsByName('check_q2');
+            let lenq2 = check_q2Radio.length;
+
+            let question2_val = '';
+
+            for (let i = 0; i < lenq2; i++) {
+                if (check_q2Radio.item(i).checked) {
+                    question2_val = check_q2Radio.item(i).value;
+                }
+            }
+            console.log(question2_val);
+
+            //ラジオボタンから各valを取得(question3_val)//
+            let check_q3Radio = document.getElementsByName('check_q3');
+            let lenq3 = check_q3Radio.length;
+
+            let question3_val = '';
+
+            for (let i = 0; i < lenq3; i++) {
+                if (check_q3Radio.item(i).checked) {
+                    question3_val = check_q3Radio.item(i).value;
+                }
+            }
+            console.log(question3_val);
+
+            // postDataの作成  ⇨ データの送信//
+            const postData = {
+                // number: $("#number").val(),
+                name: $("#studentName").val(),
+                lecture: lecture_val,
+                question1: question1_val,
+                question2: question2_val,
+                question3: question3_val,
+                time: serverTimestamp(),
+            };
+
+            console.log(postData);
+            addDoc(collection(db, "studentData3"), postData);
+        })
+
+
+        //情報を取得:documents（object形式)生成/////////////////////////////////////////////////
+        const q = query(collection(db, "studentData3"), orderBy("time", "asc"));
+
+        onSnapshot(q, (querySnapshot) => {
+            const documents = [];
+
+            querySnapshot.docs.forEach(function (doc) {
+                const document = {
+                    id: doc.id,
+                    data: doc.data(),
+                };
+                documents.push(document);
+
+            });
+            
+            //1．秋山好古の最新データ取得////////////////////////////////////////////////////
+            let correct_name1 = {
+                lecture: 0,
+                question1: 0,
+                question2: 0,
+                question3: 0,
+                time: 0,
+            };
+            let name1_count = 0;
+
+            for (let i = 0; i < documents.length; i++) {
+                if (documents[i].data.name === "秋山好古") {
+                    correct_name1.lecture = documents[i].data.lecture;
+                    correct_name1.question1 = documents[i].data.question1;
+                    correct_name1.question2 = documents[i].data.question2;
+                    correct_name1.question3 = documents[i].data.question3;
+                    correct_name1.time = documents[i].data.time;
+                    name1_count++
+                }
+            }
+            console.log(name1_count)
+
+
+            //2．秋山真之の最新データ取得////////////////////////////////////////////////////
+            let correct_name2 = {
+                lecture: 0,
+                question1: 0,
+                question2: 0,
+                question3: 0,
+                time: 0,
+            };
+            let name2_count = 0;
+
+            for (let i = 0; i < documents.length; i++) {
+                if (documents[i].data.name === "秋山真之") {
+                    correct_name2.lecture = documents[i].data.lecture;
+                    correct_name2.question1 = documents[i].data.question1;
+                    correct_name2.question2 = documents[i].data.question2;
+                    correct_name2.question3 = documents[i].data.question3;
+                    correct_name2.time = documents[i].data.time;
+                    name2_count++;
+                }
+            }
+            // console.log(correct_name2)
+
+            //3．夏目金之助の最新データ取得////////////////////////////////////////////////////
+            let correct_name3 = {
+                lecture: 0,
+                question1: 0,
+                question2: 0,
+                question3: 0,
+                time: 0,
+            };
+            let name3_count = 0;
+
+            for (let i = 0; i < documents.length; i++) {
+                if (documents[i].data.name === "夏目金之助") {
+                    correct_name3.lecture = documents[i].data.lecture;
+                    correct_name3.question1 = documents[i].data.question1;
+                    correct_name3.question2 = documents[i].data.question2;
+                    correct_name3.question3 = documents[i].data.question3;
+                    correct_name3.time = documents[i].data.time;
+                    name3_count++;
+                }
+            }
+            // console.log(correct_name3)
+
+            //4．児玉源太郎の最新データ取得////////////////////////////////////////////////////
+            let correct_name4 = {
+                lecture: 0,
+                question1: 0,
+                question2: 0,
+                question3: 0,
+                time: 0,
+            };
+            let name4_count = 0;
+
+            for (let i = 0; i < documents.length; i++) {
+                if (documents[i].data.name === "児玉源太郎") {
+                    correct_name4.lecture = documents[i].data.lecture;
+                    correct_name4.question1 = documents[i].data.question1;
+                    correct_name4.question2 = documents[i].data.question2;
+                    correct_name4.question3 = documents[i].data.question3;
+                    correct_name4.time = documents[i].data.time;
+                    name4_count++;
+                }
+            }
+            // console.log(correct_name4)
+
+            //5．乃木希典の最新データ取得////////////////////////////////////////////////////
+            let correct_name5 = {
+                lecture: 0,
+                question1: 0,
+                question2: 0,
+                question3: 0,
+                time: 0,
+            };
+            let name5_count = 0;
+
+            for (let i = 0; i < documents.length; i++) {
+                if (documents[i].data.name === "乃木希典") {
+                    correct_name5.lecture = documents[i].data.lecture;
+                    correct_name5.question1 = documents[i].data.question1;
+                    correct_name5.question2 = documents[i].data.question2;
+                    correct_name5.question3 = documents[i].data.question3;
+                    correct_name5.time = documents[i].data.time;
+                    name5_count++;
+                }
+            }
+            // console.log(correct_name3)
+
+            //各平均値の計算
+            const lecture_avg = (Number(correct_name1.lecture) + Number(correct_name2.lecture) + Number(correct_name3.lecture) + Number(correct_name4.lecture) + Number(correct_name5.lecture)) / 5;
+            const question1_avg = (Number(correct_name1.question1) + Number(correct_name2.question1) + Number(correct_name3.question1) + Number(correct_name4.question1) + Number(correct_name5.question1)) / 5;
+            const question2_avg = (Number(correct_name1.question2) + Number(correct_name2.question2) + Number(correct_name3.question2) + Number(correct_name4.question2) + Number(correct_name5.question2)) / 5;
+            const question3_avg = (Number(correct_name1.question3) + Number(correct_name2.question3) + Number(correct_name3.question3) + Number(correct_name4.question3) + Number(correct_name5.question3)) / 5;
+
+            const lecture_point = Math.floor(lecture_avg, 0);
+            const question1_point = Math.floor(question1_avg, 0);
+            const question2_point = Math.floor(question2_avg, 0);
+            const question3_point = Math.floor(question3_avg, 0);
+
+
+
+            //出力
+            document.getElementById("progress_lecture").style.width = lecture_point + "%";
+            $("#progress_lecture").html(lecture_point + "%");
+
+            document.getElementById("progress_question1").style.width = question1_point + "%";
+            $("#progress_question1").html(question1_point + "%");
+
+            document.getElementById("progress_question2").style.width = question2_point + "%";
+            $("#progress_question2").html(question2_point + "%");
+
+            document.getElementById("progress_question3").style.width = question3_point + "%";
+            $("#progress_question3").html(question3_point + "%");
+
+            // console.log(lecture_point)
+
+            //グラフを描画//////////////////////////////////////////////////////////////////////////////////
+            let ctx = document.getElementById("myChart");
+            let myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['秋山好古', '秋山真之', '夏目金之助', '児玉源太郎', '乃木希典'],
+                    datasets: [
+                        {
+                            label: '評価回数',
+                            data: [name1_count, name2_count, name3_count, name4_count, name5_count],
+                            backgroundColor: "rgba(219,39,91,0.5)"
+                        }
+                    ]
+                },
+                options: {
+                    title: {
+                        display: false,
+                        text: '評価回数'
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                suggestedMax: 10,
+                                suggestedMin: 0,
+                                stepSize: 5,
+                                callback: function (value, index, values) {
+                                    return value + '回'
+                                }
+                            }
+                        }]
+                    },
+                }
+            });
+
+            //生徒ごとにおすすめの本を出す////////////////////////////////////////////////////////////////
+            $("#recommend").on("click", function () {
+                //生徒名、最終データ（correct_name）を取得
+                let studentname = $("#studentName").val();
+                console.log(studentname)
+
+                let title = "";
+                if (studentname === "秋山好古") {
+                    if (correct_name1.question1 > correct_name1.question2) {
+                        title = "数学関数"
+                    } else if (correct_name1.question1 < correct_name1.question2) {
+                        title = "ベクトル"
+                    } else {
+                        title = "入試問題集数学"
+                    }
+                };
+                if (studentname === "秋山真之") {
+                    if (correct_name2.question1 > correct_name2.question2) {
+                        title = "数学関数"
+                    } else if (correct_name2.question1 < correct_name2.question2) {
+                        title = "ベクトル"
+                    } else {
+                        title = "入試問題集数学"
+                    }
+                };
+                if (studentname === "夏目金之助") {
+                    if (correct_name3.question1 > correct_name3.question2) {
+                        title = "数学関数"
+                    } else if (correct_name3.question1 < correct_name3.question2) {
+                        title = "ベクトル"
+                    } else {
+                        title = "入試問題集数学"
+                    }
+                };
+                if (studentname === "児玉源太郎") {
+                    if (correct_name4.question1 > correct_name4.question2) {
+                        title = "数学関数"
+                    } else if (correct_name4.question1 < correct_name4.question2) {
+                        title = "ベクトル"
+                    } else {
+                        title = "入試問題集数学"
+                    }
+                };
+                if (studentname === "乃木希典") {
+                    if (correct_name5.question1 > correct_name5.question2) {
+                        title = "数学関数"
+                    } else if (correct_name5.question1 < correct_name5.question2) {
+                        title = "ベクトル"
+                    } else {
+                        title = "入試問題集数学"
+                    }
+                };
+
+                console.log(title)
+                //lecture1が低ければ関数、lecture2が低ければベクトル、同じならば入試問題集をおすすめ
+
+                const url = `https://www.googleapis.com/books/v1/volumes?q=intitle:${title}`;
+
+                axios.get(url)
+                    .then(function (response) {
+                        // console.log(response.data)
+                        const books = [];
+                        response.data.items.forEach(book => {
+                            books.push(`<a href="${book.volumeInfo.infoLink}"> <p> ${book.volumeInfo.title} </p></a>`)
+                        })
+                        $("#output").html(books)
+                        console.log(books)
+                    })
+            })
+        })
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>

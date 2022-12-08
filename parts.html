@@ -1,0 +1,69 @@
+<!-- //jQueryへのリンク(html) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<!-- // 日時をいい感じの形式にする関数 -->
+<script>
+    function convertTimestampToDatetime(timestamp) {
+        const _d = timestamp ? new Date(timestamp * 1000) : new Date();
+        const Y = _d.getFullYear();
+        const m = (_d.getMonth() + 1).toString().padStart(2, '0');
+        const d = _d.getDate().toString().padStart(2, '0');
+        const H = _d.getHours().toString().padStart(2, '0');
+        const i = _d.getMinutes().toString().padStart(2, '0');
+        const s = _d.getSeconds().toString().padStart(2, '0');
+        return `${Y}/${m}/${d} ${H}:${i}:${s}`;
+    }
+</script>
+
+<!-- firebaseのimport -->
+<script>
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.2.0/firebase-app.js";
+
+    // <!-- // 🔽 追加 / `9.2.0`の部分を↑のFirestoreから貼り付けたコードのバージョンに合わせる -->
+    import {
+        getFirestore,
+        collection,
+        addDoc,
+        serverTimestamp,
+    } from "https://www.gstatic.com/firebasejs/9.2.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        // <!-- // 省略 -->
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+
+</script>
+
+<!-- // axiosの読み込みリンク -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+<!-- 位置情報の取得の仕方（緯度・経度を取得する） -->
+<script>
+    function showPosition(position) {
+        console.log(position);
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        console.log(lat, lng);
+    }
+
+    function showError(error) {
+        const errorMessages = [
+            "位置情報が許可されてません",
+            "現在位置を特定できません",
+            "位置情報を取得する前にタイムアウトになりました",
+        ];
+        alert(`error:${errorMessages[error.code - 1]}`);
+    }
+
+    const option = {
+        enableHighAccuracy: true,
+        maximumAge: 20000,
+        timeout: 1000000,
+    }
+
+    navigator.geolocation.getCurrentPosition(showPosition, showError, Option);
+</script>

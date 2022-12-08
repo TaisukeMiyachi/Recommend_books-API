@@ -1,0 +1,247 @@
+body {
+    width: 100vw;
+}
+
+#screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#left {
+    width: 60%;
+}
+
+#right {
+    width: 40%;
+}
+
+#studentName,
+#main_title,
+#name,
+#headtext,
+#lecture,
+#question1,
+#question2,
+#question3,
+#lecture_title,
+#question1_title,
+#question2_title,
+#question3_title {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+}
+
+/* タイトル */
+#main_title {
+    text-align: center;
+    text-decoration: underline;
+    margin-top: 50px;
+}
+
+/* 番号・名前 */
+#number {
+    margin-left: 50px;
+}
+
+#name {
+    margin-left: 50px;
+    margin-top: 55px;
+    margin-bottom: 10px;
+}
+
+h2 {
+    margin-left: 50px;
+}
+
+/* 講義 */
+#lecture-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #000000;
+    border-radius: 5pt;
+    width: 90%;
+    height: 100px;
+    background-color: aquamarine;
+}
+
+#lecture_title {
+    text-align: center;
+}
+
+#lecture-containar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#lecture {
+    width: 50%;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: large;
+}
+
+.progress {
+    width: 50%;
+}
+
+#progress_lecture {
+    width: 90%;
+}
+
+/* 例題1 */
+#question1-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #000000;
+    border-radius: 5pt;
+    width: 90%;
+    height: 100px;
+    /* background-color: aquamarine; */
+}
+
+#question1_title {
+    text-align: center;
+}
+
+#question1-containar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#question1 {
+    width: 50%;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: large;
+}
+
+.progress {
+    width: 50%;
+}
+
+#progress_question1 {
+    width: 90%;
+}
+
+/* 例題2 */
+#question2-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #000000;
+    border-radius: 5pt;
+    width: 90%;
+    height: 100px;
+    /* background-color: aquamarine; */
+}
+
+#question2_title {
+    text-align: center;
+}
+
+#question2-containar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#question2 {
+    width: 50%;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: large;
+}
+
+.progress {
+    width: 50%;
+}
+
+#progress_question2 {
+    width: 90%;
+}
+
+/*課題 */
+#question3-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #000000;
+    border-radius: 5pt;
+    width: 90%;
+    height: 100px;
+    /* background-color: aquamarine; */
+}
+
+#question3_title {
+    text-align: center;
+}
+
+#question3-containar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#question3 {
+    width: 50%;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: large;
+}
+
+.progress {
+    width: 50%;
+}
+
+#progress_question3 {
+    width: 90%;
+}
+
+/* 送信ボタン */
+
+#send_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#output {
+    width: full;
+}
